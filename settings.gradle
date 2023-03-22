@@ -1,1 +1,6 @@
 rootProject.name = 'real-time'
+include 'start'
+include 'infrastructure'
+include 'service'
+include 'domain'
+

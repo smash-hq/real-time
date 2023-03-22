@@ -1,32 +1,90 @@
-plugins {
-    id 'java'
-    id 'org.springframework.boot' version '3.0.4'
-    id 'io.spring.dependency-management' version '1.1.0'
+wrapper {
+    gradleVersion = '6.4.1'
 }
-
-group = 'com.smash.data'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
+buildscript {
+    //定义全局变量
+    ext {
+        springBootVersion = '2.3.1.RELEASE'
+//        shadowVersion = '6.1.0'
+    }
+    repositories {
+        mavenLocal()
+        maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+//        classpath("com.github.jengelman.gradle.plugins:shadow:${shadowVersion}")
     }
 }
 
-repositories {
-    mavenCentral()
+allprojects {
+    group = 'com.smash.realdata'
+    version = '1.0.0-SNAPSHOT'
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.springframework.boot'
+    jar.enabled = true
+    bootJar.enabled = false
+    sourceCompatibility = 11
+    targetCompatibility = 11
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = "UTF-8"
+    }
+    repositories {
+        maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
+        mavenCentral()
+    }
+
+    configurations {
+        compile.exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+        compile.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    }
+
+    dependencies {
+        implementation('org.springframework.boot:spring-boot-starter-log4j2')
+        implementation('org.springframework.boot:spring-boot-starter') {
+            exclude module: 'spring-boot-starter-logging'
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            options.encoding = "UTF-8"
+        }
+    }
 }
 
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
-    compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'com.mysql:mysql-connector-j'
-    annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+subprojects {
+    //引入spring 依赖管理插件
+    apply plugin: 'io.spring.dependency-management'
+    //引入springboot 插件
+    apply plugin: 'org.springframework.boot'
+    // 指定shadow插件
+//    apply plugin: "com.github.johnrengelman.shadow"
+    //指定编译编译.java文件的jdk版本
+    sourceCompatibility = 11
+    //确保class文件与targetCompatibility指定版本，或者更新的java虚拟机兼容
+    targetCompatibility = 11
+    //指定gradle编译时，针对java文件使用 UTF-8 编码
+    jar.enabled = true
+    bootJar.enabled = true
+//    shadowJar.enabled = false
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            options.encoding = 'UTF-8'
+        }
+    }
+}
+
