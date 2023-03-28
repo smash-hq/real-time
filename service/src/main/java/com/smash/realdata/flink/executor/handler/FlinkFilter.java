@@ -1,42 +1,31 @@
 package com.smash.realdata.flink.executor.handler;
 
-import com.smash.realdata.common.handler.Handler;
-import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.spark.api.java.function.FilterFunction;
-
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import com.smash.realdata.enums.StrategyEnum;
+import com.smash.realdata.flink.executor.strategy.AbstractStrategy;
+import org.apache.flink.api.common.functions.FilterFunction;
+import org.apache.flink.api.common.functions.MapFunction;
+import org.springframework.stereotype.Component;
 
 /**
  * @Created: smash_hq at 2023/3/22 16:11
  * @Description: 数据清洗
  */
-public class FlinkFilter<T> implements Handler<DataStream<T>, DataStream<T>>, FilterFunction<T> {
+@Component
+public class FlinkFilter<T> extends AbstractStrategy implements FilterFunction {
 
-    private Class<T> tClass;
 
-    FlinkFilter(Class<T> tClass) {
-        this.tClass = tClass;
-    }
-
-    public Class<T> gettClass() {
-        return tClass;
+    private FlinkFilter() {
+        register();
     }
 
     @Override
-    public DataStream<T> exec(DataStream<T> in) {
-        return in.filter(it -> call(it));
+    public StrategyEnum setType() {
+        return StrategyEnum.FILTER;
     }
 
-    @Override
-    public boolean call(T value) throws Exception {
 
+    @Override
+    public boolean filter(Object value) throws Exception {
         return false;
-    }
-
-
-    public static void main(String[] args) {
-        FlinkFilter<String> flinkFilter = new FlinkFilter(String.class){};
-        System.out.println(flinkFilter.gettClass());
     }
 }

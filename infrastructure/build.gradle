@@ -4,6 +4,7 @@ configurations {
 
 dependencies {
     implementation project(':domain')
+    implementation 'org.projectlombok:lombok:1.18.22'
     compile "com.google.guava:guava:20.0"
     compile 'org.apache.commons:commons-lang3'
     compile 'com.alibaba:fastjson:1.2.83'

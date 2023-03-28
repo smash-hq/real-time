@@ -2,7 +2,7 @@ package com.smash.realdata.common.handler;
 
 /**
  * @Created: smash_hq at 2023/3/22 16:08
- * @Description: 执行各项数据操作
+ * @Description: 执行各项数据操作，采用策略模式
  */
 public interface Handler<I, O> {
 
